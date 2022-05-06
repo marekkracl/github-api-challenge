@@ -2,7 +2,7 @@
 
 run `npm install`
 
-set the environment variable to a valid GitHub PAT e.g. `ghp_111111111111111111111111111111111`
+set the environment variable `TOKEN` to a valid GitHub PAT e.g. `TOKEN=ghp_111111111111111111111111111111111`
 
 run `npm start`
 
