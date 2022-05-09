@@ -1,5 +1,6 @@
 import { createServer, formatResult } from "./app";
 import request from "supertest";
+import { getCommitCount, getPulls } from "./api";
 
 const app = createServer();
 
@@ -53,6 +54,25 @@ describe("Unit Tests", () => {
         author: "testUser",
       };
       expect(formatResult(result)).toEqual(expected);
+    });
+  });
+});
+
+describe("Integration Tests", () => {
+  describe("getPulls", () => {
+    it("should retrieve a known result from GitHub ([])", async () => {
+      const { data: response } = await getPulls(
+        "marekkracl",
+        "github-api-challenge"
+      );
+      expect(response).toEqual(expect.arrayContaining([]));
+    });
+  });
+
+  describe("getCommitCount", () => {
+    it("should retrieve a known result from GitHub (14)", async () => {
+      const response = await getCommitCount("twbs", "bootstrap", 28744);
+      expect(response).toEqual(14);
     });
   });
 });
