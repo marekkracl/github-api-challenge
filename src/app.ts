@@ -1,19 +1,20 @@
-import axios, { AxiosResponse } from "axios";
 import express, { Application, Request, Response } from "express";
+import { getPulls, getCommitCount } from "./api";
 
 const app: Application = express();
 const port: number = parseInt(process.env.PORT, 10) || 3000;
-const token: string = process.env.TOKEN;
-
-//sets token if one was passed, otherwise results will be rate-limited
-const headers = { authorization: token ? ` token ${token}` : "" };
 
 export function createServer() {
-  app.get("/:owner/:repo", async (req: Request, res: Response) => {
+  app.get("/", async (req: Request, res: Response) => {
     // Get the owner and repo from the URL
-    const { owner, repo } = req.params;
+    const { owner, repo } = req.query;
 
-    if (!owner || !repo) {
+    if (
+      !owner ||
+      typeof owner !== "string" ||
+      !repo ||
+      typeof repo !== "string"
+    ) {
       res.status(400).send("Missing owner or repo");
       return;
     }
