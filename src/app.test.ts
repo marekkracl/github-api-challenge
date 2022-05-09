@@ -1,13 +1,37 @@
 import { createServer, formatResult } from "./app";
 import request from "supertest";
+import { json } from "express";
 
 const app = createServer();
 
-describe("Server Started", () => {
+describe("Server", () => {
   describe("GET valid /:owner/:repo", () => {
-    it("should return 200 with a valid owner/repo", (done) => {
-      //const application = app;
-      request(app).get("/marekkracl/github-api-challenge").expect(200, done);
+    it("should return 200 with a valid owner/repo", async () => {
+      const response = await request(app).get("/?owner=owner&repo=repo");
+      expect(response.statusCode).toBe(200);
+    });
+
+    it("should return a valid response with a valid owner/repo", async () => {
+      const response = await request(app).get("/?owner=owner&repo=repo");
+      expect(response.headers["content-type"]).toBe(
+        "application/json; charset=utf-8"
+      );
+    });
+  });
+  describe("GET INVALID /:owner/:repo", () => {
+    it("should return 400 if owner is undefined", async () => {
+      const response = await request(app).get("/?repo=marekkracl");
+      expect(response.status).toBe(400);
+    });
+
+    it("should return 400 if repo is undefined", async () => {
+      const response = await request(app).get("/?owner=github-api-challenge");
+      expect(response.status).toBe(400);
+    });
+
+    it("should return an empty array otherwise", async () => {
+      const response = await request(app).get("/?owner=owner&repo=repo");
+      expect(JSON.parse(response.text)).toEqual([]);
     });
   });
 });
