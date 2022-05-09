@@ -15,9 +15,11 @@ export function createServer() {
       !repo ||
       typeof repo !== "string"
     ) {
-      res.status(400).send("Missing owner or repo");
-      return;
+      // If the owner or repo are not defined, return 400
+      return res.status(400).send("Missing owner or repo");
     }
+
+    // Define the results array
     let results: APIResult[] = [];
 
     // Get the pull requests from the API
@@ -49,6 +51,7 @@ export function createServer() {
     }
   });
 
+  // If in a testing environment, doesn't set the port.  Kind of hacky, but avoids the "EADDRINUSE: address already in use" error
   if (process.env.NODE_ENV !== "test") {
     app.listen(port, () => {
       return console.log(`Express is listening at http://localhost:${port}`);
@@ -61,7 +64,7 @@ export function createServer() {
 /**
  * Formats a pull request into expected result object
  * @param pull
- * @returns Promise<APIResult>
+ * @returns APIResult
  */
 export function formatResult(pull: IGitHubResult): APIResult {
   return {

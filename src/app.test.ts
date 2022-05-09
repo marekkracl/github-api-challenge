@@ -1,6 +1,5 @@
 import { createServer, formatResult } from "./app";
 import request from "supertest";
-import { json } from "express";
 
 const app = createServer();
 
