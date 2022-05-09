@@ -19,8 +19,42 @@ export function createServer() {
       return;
     }
     let results: APIResult[] = [];
+
+    // Get the pull requests from the API
+    try {
+      const { data: pulls } = await getPulls(owner, repo);
+
+      // Get the commits for each pull request
+      const mappedPulls = await Promise.all(
+        pulls.map(async (pull) => {
+          //format each PR into expected object
+          let result = formatResult(pull);
+          //asynchronously get commits for each PR and assign the result
+          (await result).commit_count = await getCommitCount(
+            owner,
+            repo,
+            pull.number
+          );
+          return result;
+        })
+      );
+
+      results = mappedPulls;
+    } catch (err) {
+      // Log the error to the console
+      console.error(err);
+    } finally {
+      // Send the results to the client
       return res.json(results);
+    }
   });
+
+  if (process.env.NODE_ENV !== "test") {
+    app.listen(port, () => {
+      return console.log(`Express is listening at http://localhost:${port}`);
+    });
+  }
+
   return app;
 }
 
